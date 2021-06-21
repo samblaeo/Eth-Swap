@@ -13,15 +13,15 @@ function tokens(n) {
     return web3.utils.toWei(n, 'Ether')
 }
 
-contract('EthSwap', (accounts) => {
+contract('EthSwap', ([deployer, investor]) => { //Se reciben 2 cuentas (Ganache#1 y Ganache#2)
 
     let ethSwap, token;
 
     before(async () => {
-        
-        ethSwap = await EthSwap.new()
 
         token = await Token.new()
+        
+        ethSwap = await EthSwap.new(token.address)
 
         //Transfer all tokens to EthSwap (1Millon)
         await token.transfer(ethSwap.address, tokens('1000000'))
@@ -51,6 +51,27 @@ contract('EthSwap', (accounts) => {
             let balance = await token.balanceOf(ethSwap.address)
 
             assert.equal(balance.toString(), tokens('1000000'))
+        })
+    })
+
+    describe('Buy tokens', async () => {
+
+        let result;
+
+        before(async () => {
+
+            //Purchase tokens before each example
+            result = await ethSwap.buyTokens({ from: investor, value: web3.utils.toWei('1', 'Ether') }) 
+        })
+
+        it('Allows users to instantly purchase tokens from ethSwap for a fixed price', async () => {
+
+            //Check investor token balance after purchase
+            
+            let balance = await token.balanceOf(investor) 
+                //Ponemos el balance de Tokens porque en el buyTokens lo que hacemos es transferir Tokens.sol 
+
+            assert.equal(balance.toString(), tokens('100')) //Ponemos 100 tokens porque la compra son 100 Ethers y 100 Ethers = 100 + 18 ceros weis
         })
     })
 })
