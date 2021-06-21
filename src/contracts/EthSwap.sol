@@ -12,6 +12,13 @@ contract EthSwap {
 
     uint public rate = 100; // Por cada ethereum se reciben 100Dapp, por eso el rate es 100
 
+    event TokenPurchased(
+        address account, //Cuenta que lanza la compra
+        address token,   //Token que se está comprando
+        uint amount,     //Cantidad de tokens
+        uint rate        //Rate de moneda a otra
+    );
+
     //Pasamos el token en el constructor 
     //ESTO IMPLICA AÑADIR EL PARAMETRO CADA VEZ QUE SE CREE UNA INSTANCIA DE ESTE OBJETO
     constructor(Token _token) public {
@@ -23,7 +30,14 @@ contract EthSwap {
 
         //Calculate the number of tokens to buy 
         uint tokenAmount = msg.value * rate;
+        
+        //Require that EthSwap has enough tokens
+        require(token.balanceOf(address(this)) >= tokenAmount); //El balance de tokens tiene que ser mayor o igual a tokenAmount
 
+        //Transfer tokens to the user
         token.transfer(msg.sender, tokenAmount);// Le transferimos la cantidad de tokens (_amount) al que realiza la acción (msg.sender)
+
+        //Emmit an event
+        emit TokenPurchased(msg.sender, address(token), tokenAmount, rate);
     }
 }

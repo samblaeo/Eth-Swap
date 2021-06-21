@@ -72,6 +72,36 @@ contract('EthSwap', ([deployer, investor]) => { //Se reciben 2 cuentas (Ganache#
                 //Ponemos el balance de Tokens porque en el buyTokens lo que hacemos es transferir Tokens.sol 
 
             assert.equal(balance.toString(), tokens('100')) //Ponemos 100 tokens porque la compra son 100 Ethers y 100 Ethers = 100 + 18 ceros weis
+
+            /* -------------- SEPARATOR -------------- */
+
+            let ethSwapBalance
+
+            ethSwapBalance = await token.balanceOf(ethSwap.address)
+
+            assert.equal(ethSwapBalance.toString(), tokens('999900')) 
+                //Como compramos 100 tokens y en total tenemos 1.000.000, queda la resta
+
+            /* -------------- SEPARATOR -------------- */
+
+            ethSwapBalance = await web3.eth.getBalance(ethSwap.address) //Cogemos el balance de ethSwap que hay en la address de ethSwap
+
+            assert.equal(ethSwapBalance.toString(), web3.utils.toWei('1', 'Ether')) //Comprobamos que son 100 Ethers lo que tenemos (lo que hemos comprado)
+
+            /* -------------- SEPARATOR -------------- */
+
+            const event = result.logs[0].args 
+                //En los logs del resultado de la compra (donde está el evento) se muestra el evento, cogemos el primero y el objeto 'args'
+
+            assert.equal(event.account, investor) //El que llama al evento es el investor
+            
+            assert.equal(event.token, token.address) //La moneda que se compra es Token
+            
+            assert.equal(event.amount.toString(), tokens('100').toString()) //La cantidad son 100 Ether
+            
+            assert.equal(event.rate.toString(), '100') //La rate es 100
+
+
         })
     })
 })
