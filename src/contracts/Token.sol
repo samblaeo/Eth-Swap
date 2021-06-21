@@ -3,8 +3,10 @@ pragma solidity ^0.5.0;
 contract Token {
     string  public name = "DApp Token";
     string  public symbol = "DAPP";
+
+    //Total supply is represented by the number + 18 ceroos. 1 token = 1000000000000000000 weis, then: 1000000 tokens = 1000000000000000000000000 wei
     uint256 public totalSupply = 1000000000000000000000000; // 1 million tokens
-    uint8   public decimals = 18;
+    uint8   public decimals = 18; 
 
     event Transfer(
         address indexed _from,
