@@ -13,7 +13,7 @@ class App extends Component {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Dapp University
+            ShieldNetwork Swap
           </a>
         </nav>
         <div className="container-fluid mt-5">
@@ -25,19 +25,19 @@ class App extends Component {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <img src={logo} className="App-logo" alt="logo" />
+                  <img src={logo} className="App-logo w-50" alt="logo" />
                 </a>
-                <h1>Dapp University Starter Kit</h1>
+                <h1>Shield Network</h1>
                 <p>
                   Edit <code>src/components/App.js</code> and save to reload.
                 </p>
                 <a
                   className="App-link"
-                  href="http://www.dappuniversity.com/bootcamp"
+                  href="http://shieldpad.io"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  LEARN BLOCKCHAIN <u><b>NOW! </b></u>
+                  GO TO SHIELDPAD 
                 </a>
               </div>
             </main>
