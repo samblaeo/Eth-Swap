@@ -1,21 +1,73 @@
 import React, { Component } from 'react';
-import logo from '../logo.png';
+import Navbar from './Nabvar.js'
+import Web3 from 'web3';
 import './App.css';
 
 class App extends Component {
+
+  async componentWillMount() { //Special function called before all 
+
+    await this.loadWeb3()
+    await this.loadBlockchainData()
+  }
+
+  /**
+   * Load the web 3
+   */
+
+  async loadWeb3() {
+    if (window.etheruem) {
+      window.web3 = new Web3(window.etheruem)
+      await window.etheruem.enable()
+      await window.ethereum.send('eth_requestAccounts'); //This request to metamask the connection
+    }
+    else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider)
+      await window.ethereum.send('eth_requestAccounts'); //This request to metamask the connection
+    }
+    else {
+      window.alert('Non etheruem browser detected. You should consider trying to install metamask')
+    }
+  }
+
+  /**
+   * Load the blockchain data
+   */
+
+  async loadBlockchainData() {
+
+    const web3 = window.web3
+
+    const accounts = await web3.eth.getAccounts()
+
+    this.setState({ account: accounts[0]})
+
+    const ethSwapBalance = await web3.eth.getBalance(this.state.account)
+
+    this.setState({ ethSwapBalance }) //Si la variable y el valor tienen el mismo nombre, no hace falta poner ethSwapBalance: ethSwapBalance
+
+
+  }
+
+  /**
+   * Constructor function
+   * @param {props} props 
+   */
+  constructor(props) {
+
+    super(props)
+
+    this.state = {
+
+      account: '',
+      ethSwapBalance: 0
+    }
+  }
+
   render() {
     return (
       <div>
-        <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-          <a
-            className="navbar-brand col-sm-3 col-md-2 mr-0"
-            href="http://www.dappuniversity.com/bootcamp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ShieldNetwork Swap
-          </a>
-        </nav>
+        <Navbar account = {this.state.account} />
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
@@ -25,20 +77,8 @@ class App extends Component {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <img src={logo} className="App-logo w-50" alt="logo" />
                 </a>
                 <h1>Shield Network</h1>
-                <p>
-                  Edit <code>src/components/App.js</code> and save to reload.
-                </p>
-                <a
-                  className="App-link"
-                  href="http://shieldpad.io"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GO TO SHIELDPAD 
-                </a>
               </div>
             </main>
           </div>
