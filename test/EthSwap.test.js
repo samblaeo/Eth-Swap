@@ -123,6 +123,8 @@ contract('EthSwap', ([deployer, investor]) => { //Se reciben 2 cuentas (Ganache#
 
             assert.equal(investorBalance.toString(), tokens('0'))
 
+            /* -------------- SEPARATOR -------------- */
+
             //Check ethSwap balance after the purchase
             let ethSwapBalance
 
@@ -132,11 +134,32 @@ contract('EthSwap', ([deployer, investor]) => { //Se reciben 2 cuentas (Ganache#
             //Debe de ser 1.000.000 porque hemos vuelto a recuperar los 100 perdidos
             assert.equal(ethSwapBalance, tokens('1000000'))
 
+            /* -------------- SEPARATOR -------------- */
+
             //Cogemos el balance que tenemos en la dirección de ethSwap
             ethSwapBalance = await web3.eth.getBalance(ethSwap.address)
 
             //Debe de ser 0 porque hemos vendido todo
             assert.equal(ethSwapBalance.toString(), web3.utils.toWei('0', 'Ether'))
+
+            /* -------------- SEPARATOR -------------- */
+
+            const event = result.logs[0].args 
+                //En los logs del resultado de la compra (donde está el evento) se muestra el evento, cogemos el primero y el objeto 'args'
+
+            assert.equal(event.account, investor) //El que llama al evento es el investor
+            
+            assert.equal(event.token, token.address) //La moneda que se vende es Token
+            
+            assert.equal(event.amount.toString(), tokens('100').toString()) //La cantidad son 100 Ether
+            
+            assert.equal(event.rate.toString(), '100') //La rate es 100
+
+            /* -------------- SEPARATOR -------------- */
+
+            //FAILURE: investor can't seel more tokens than they have
+
+            await ethSwap.sellTokens(tokens('500'), { from: investor }).should.be.rejected;
         })
     })
 })

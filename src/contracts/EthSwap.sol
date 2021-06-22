@@ -12,7 +12,14 @@ contract EthSwap {
 
     uint public rate = 100; // Por cada ethereum se reciben 100Dapp, por eso el rate es 100
 
-    event TokenPurchased(
+    event TokensPurchased(
+        address account, //Cuenta que lanza la compra
+        address token,   //Token que se está comprando
+        uint amount,     //Cantidad de tokens
+        uint rate        //Rate de moneda a otra
+    );
+
+    event TokensSold(
         address account, //Cuenta que lanza la compra
         address token,   //Token que se está comprando
         uint amount,     //Cantidad de tokens
@@ -38,17 +45,26 @@ contract EthSwap {
         token.transfer(msg.sender, tokenAmount);// Le transferimos la cantidad de tokens (_amount) al que realiza la acción (msg.sender)
 
         //Emmit an event
-        emit TokenPurchased(msg.sender, address(token), tokenAmount, rate);
+        emit TokensPurchased(msg.sender, address(token), tokenAmount, rate);
     }
 
     function sellTokens(uint _amount) public payable {
 
+        //User can't sell more tokens than they have
+        require(token.balanceOf(msg.sender) >= _amount);
+
         // Calculate the amount of ether to redeem (Amount / rate to get the ether amount)
         uint etherAmount = _amount / rate; 
+
+        //Require that EthSwap has enough tokens
+        require(address(this).balance >= etherAmount); //El balance de tokens tiene que ser mayor o igual a tokenAmount
 
         // Perform sale (from the investor to the EthSwap)
         token.transferFrom(msg.sender, address(this), _amount);
 
         msg.sender.transfer(etherAmount);
+
+        //Emmit an event
+        emit TokensSold(msg.sender, address(token), _amount, rate);
     }
 }
