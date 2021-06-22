@@ -28,7 +28,7 @@ contract EthSwap {
 
     function buyTokens() public payable {
 
-        //Calculate the number of tokens to buy 
+        //Calculate the number of tokens to buy (Ether * rate to get the token amount)
         uint tokenAmount = msg.value * rate;
         
         //Require that EthSwap has enough tokens
@@ -39,5 +39,16 @@ contract EthSwap {
 
         //Emmit an event
         emit TokenPurchased(msg.sender, address(token), tokenAmount, rate);
+    }
+
+    function sellTokens(uint _amount) public payable {
+
+        // Calculate the amount of ether to redeem (Amount / rate to get the ether amount)
+        uint etherAmount = _amount / rate; 
+
+        // Perform sale (from the investor to the EthSwap)
+        token.transferFrom(msg.sender, address(this), _amount);
+
+        msg.sender.transfer(etherAmount);
     }
 }

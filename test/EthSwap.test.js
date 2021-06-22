@@ -100,8 +100,43 @@ contract('EthSwap', ([deployer, investor]) => { //Se reciben 2 cuentas (Ganache#
             assert.equal(event.amount.toString(), tokens('100').toString()) //La cantidad son 100 Ether
             
             assert.equal(event.rate.toString(), '100') //La rate es 100
+        })
+    })
 
+    describe('Sell tokens', async () => {
 
+        let result;
+
+        before(async () => {
+
+            //Cuando llamamos al metodo transferFrom debemos aprobar siempre la transacción
+            await token.approve(ethSwap.address, tokens('100'), { from: investor })
+
+            //Investor sell the tokens
+            result = await ethSwap.sellTokens(tokens('100'), { from: investor })
+        })
+
+        it('Allows users to instantly sell tokens to ethSwap for a fixed price', async () => {
+
+            //Check investor token balance after purchase (balanceOf is from the contract, so we don't need the token.address)
+            let investorBalance = await token.balanceOf(investor)
+
+            assert.equal(investorBalance.toString(), tokens('0'))
+
+            //Check ethSwap balance after the purchase
+            let ethSwapBalance
+
+            //Primero cogemos el balance de ethSwap en el smart contract Token
+            ethSwapBalance = await token.balanceOf(ethSwap.address) 
+
+            //Debe de ser 1.000.000 porque hemos vuelto a recuperar los 100 perdidos
+            assert.equal(ethSwapBalance, tokens('1000000'))
+
+            //Cogemos el balance que tenemos en la dirección de ethSwap
+            ethSwapBalance = await web3.eth.getBalance(ethSwap.address)
+
+            //Debe de ser 0 porque hemos vendido todo
+            assert.equal(ethSwapBalance.toString(), web3.utils.toWei('0', 'Ether'))
         })
     })
 })
