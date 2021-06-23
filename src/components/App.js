@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Navbar from './Nabvar.js'
+import Navbar from './Navbar.js'
 import Main from './Main.js'
 import Web3 from 'web3';
 import './App.css';
@@ -45,9 +45,9 @@ class App extends Component {
 
     this.setState({ account: accounts[0]})
 
-    const ethSwapBalance = await web3.eth.getBalance(this.state.account)
+    const ethBalance = await web3.eth.getBalance(this.state.account)
 
-    this.setState({ ethSwapBalance }) //Si la variable y el valor tienen el mismo nombre, no hace falta poner ethSwapBalance: ethSwapBalance
+    this.setState({ ethBalance }) //Si la variable y el valor tienen el mismo nombre, no hace falta poner ethBalance: ethBalance
 
     //Load token
     const networkId = await web3.eth.net.getId() //Luego cogemos el network id
@@ -56,7 +56,7 @@ class App extends Component {
 
     if(tokenData) {
 
-      const token = await new web3.eth.Contract(Token.abi, tokenData.address) //Y creamos el token con el abi y con el address
+      const token = new web3.eth.Contract(Token.abi, tokenData.address) //Y creamos el token con el abi y con el address
 
       this.setState( { token } )//Si la variable y el valor tienen el mismo nombre, no hace falta poner token: token
 
@@ -68,17 +68,17 @@ class App extends Component {
       window.alert('Token contract not deployed to detected network')
     }
 
-    //Load token
+    //Load ethSwap
     const ethSwapData = EthSwap.networks[networkId] //Guardamos el networkId
 
     if(ethSwapData) {
 
-      const ethSwap = await new web3.eth.Contract(EthSwap.abi, ethSwapData.address) //Y creamos el token con el abi y con el address
+      const ethSwap = new web3.eth.Contract(EthSwap.abi, ethSwapData.address) //Y creamos el token con el abi y con el address
 
       this.setState( { ethSwap } )//Si la variable y el valor tienen el mismo nombre, no hace falta poner token: token
     } else {
 
-      window.alert('Token contract not deployed to detected network')
+      window.alert('EthSwap contract not deployed to detected network')
     }
 
     this.setState( { loading: false } )
@@ -89,7 +89,8 @@ class App extends Component {
     this.setState({loading: true})
 
     this.state.ethSwap.methods.buyTokens().send({ value: etherAmount, from: this.state.account }).on('transactionHash', (hash) => {
-      this.setState({loading: false })
+      this.setState({ loading: false })
+      window.location.reload()
     })
   }
 
@@ -106,8 +107,8 @@ class App extends Component {
       account: '',
       token: {},
       ethSwap: {},
-      tokenBalance: 0,
-      ethSwapBalance: 0,
+      tokenBalance: '0',
+      ethBalance: '0',
       loading: true
     }
   }
@@ -120,7 +121,7 @@ class App extends Component {
       content = <p id="loader" className="text-center">Loading...</p>
      else 
       content = <Main 
-                ethSwapBalance = {this.state.ethSwapBalance}
+                ethBalance = {this.state.ethBalance}
                 tokenBalance = {this.state.tokenBalance}
                 buyTokens = {this.buyTokens} //Así pasamos una función
 

@@ -75,18 +75,18 @@ contract('EthSwap', ([deployer, investor]) => { //Se reciben 2 cuentas (Ganache#
 
             /* -------------- SEPARATOR -------------- */
 
-            let ethSwapBalance
+            let ethBalance
 
-            ethSwapBalance = await token.balanceOf(ethSwap.address)
+            ethBalance = await token.balanceOf(ethSwap.address)
 
-            assert.equal(ethSwapBalance.toString(), tokens('999900')) 
+            assert.equal(ethBalance.toString(), tokens('999900')) 
                 //Como compramos 100 tokens y en total tenemos 1.000.000, queda la resta
 
             /* -------------- SEPARATOR -------------- */
 
-            ethSwapBalance = await web3.eth.getBalance(ethSwap.address) //Cogemos el balance de ethSwap que hay en la address de ethSwap
+            ethBalance = await web3.eth.getBalance(ethSwap.address) //Cogemos el balance de ethSwap que hay en la address de ethSwap
 
-            assert.equal(ethSwapBalance.toString(), web3.utils.toWei('1', 'Ether')) //Comprobamos que son 100 Ethers lo que tenemos (lo que hemos comprado)
+            assert.equal(ethBalance.toString(), web3.utils.toWei('1', 'Ether')) //Comprobamos que son 100 Ethers lo que tenemos (lo que hemos comprado)
 
             /* -------------- SEPARATOR -------------- */
 
@@ -126,21 +126,21 @@ contract('EthSwap', ([deployer, investor]) => { //Se reciben 2 cuentas (Ganache#
             /* -------------- SEPARATOR -------------- */
 
             //Check ethSwap balance after the purchase
-            let ethSwapBalance
+            let ethBalance
 
             //Primero cogemos el balance de ethSwap en el smart contract Token
-            ethSwapBalance = await token.balanceOf(ethSwap.address) 
+            ethBalance = await token.balanceOf(ethSwap.address) 
 
             //Debe de ser 1.000.000 porque hemos vuelto a recuperar los 100 perdidos
-            assert.equal(ethSwapBalance, tokens('1000000'))
+            assert.equal(ethBalance, tokens('1000000'))
 
             /* -------------- SEPARATOR -------------- */
 
             //Cogemos el balance que tenemos en la dirección de ethSwap
-            ethSwapBalance = await web3.eth.getBalance(ethSwap.address)
+            ethBalance = await web3.eth.getBalance(ethSwap.address)
 
             //Debe de ser 0 porque hemos vendido todo
-            assert.equal(ethSwapBalance.toString(), web3.utils.toWei('0', 'Ether'))
+            assert.equal(ethBalance.toString(), web3.utils.toWei('0', 'Ether'))
 
             /* -------------- SEPARATOR -------------- */
 
