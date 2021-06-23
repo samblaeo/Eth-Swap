@@ -9,7 +9,7 @@ module.exports = async function(deployer) {
   const token = await Token.deployed()
 
   // Deploy EthSwap
-  await deployer.deploy(EthSwap, token.address);
+  await deployer.deploy(EthSwap, token.address); //SI QUEREMOS PASAR EL ADDRESS PRIMERO TIENE QUE EXISTIR EL TOKEN QUE NECESITAMOS
 
   const ethSwap = await EthSwap.deployed()
 
